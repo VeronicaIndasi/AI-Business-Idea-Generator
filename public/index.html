@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Business Idea Generator</title>
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="heading">Generate Your Business Idea</h1>
+    <form id="ideaForm">
+      <label for="industry">Select Industry:</label>
+      <select id="industry" class="select-input">
+        <option value="tech">Tech</option>
+        <option value="food">Food</option>
+        <option value="retail">Retail</option>
+      </select>
+      
+      <br/>
+      <label for="skills">Enter Your Skills:</label>
+      <input type="text" id="skills" class="text-input" placeholder="e.g., coding, cooking"required>
+      
+      <br/>
+      <button type="submit" class="submit-btn">Generate Idea</button>
+    </form>
+
+    <p id="result" class="result-text"></p>
+  </div>
+
+  <script src="scripts/scripts.js"></script>
+</body>
+</html>
+
+document.getElementById('ideaForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const industry = document.getElementById('industry').value;
+
+  const response = await fetch('/api/ideas/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ industry })
+  });
+
+  const data = await response.json();
+  document.getElementById('result').textContent = `Your business idea: ${data.idea}`;
+});
+
+try {
+  const response = await fetch('/api/ideas/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ industry })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate idea');
+  }
+
+  const data = await response.json();
+  document.getElementById('result').textContent = `Your business idea: ${data.idea}`;
+} catch (error) {
+  document.getElementById('result').textContent = `Error: ${error.message}`;
+}
